@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using Corral;
 
-namespace LinkStoreTests;
+namespace CorralTests;
 
 internal static class Program
 {
     private static int _passed, _failed;
 
-    private static void Check(string name, bool ok, string detail = "")
+    internal static void Check(string name, bool ok, string detail = "")
     {
         if (ok) _passed++; else _failed++;
         Console.WriteLine("{0,-4} {1}{2}", ok ? "PASS" : "FAIL", name, ok || detail == "" ? "" : "  -> " + detail);
@@ -134,6 +134,8 @@ internal static class Program
         {
             try { Directory.Delete(work, recursive: true); } catch (IOException) { }
         }
+
+        ConfigTests.Run(Check);
 
         Console.WriteLine();
         Console.WriteLine("{0} passed, {1} failed", _passed, _failed);

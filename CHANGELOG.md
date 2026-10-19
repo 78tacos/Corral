@@ -2,6 +2,23 @@
 
 All notable changes to Corral. The version number lives in `Corral.csproj` (`<Version>`).
 
+## 1.2.0
+
+**Double-click the desktop: icons and fences can be toggled separately.**
+- New tray submenu **Double-click on the desktop** sets what a plain double-click on empty desktop does: *Hide / show
+  fences* (the default, as before), *Hide / show desktop icons* only, *Hide / show both*, or *Do nothing*.
+- **Shift + double-click** on empty desktop always toggles the real desktop icons only, leaving the fences alone,
+  whichever setting is chosen. With the fences hidden it hides or shows the icons temporarily, so a clean
+  desktop is one Shift + double-click away.
+- This replaces the two earlier checkboxes. Existing settings upgrade automatically (the old pair of
+  switches becomes the matching mode) and nothing changes unless you change it.
+
+**Developer**
+- `AppConfig.DoubleClickAction` (string enum) replaces `DoubleClickDesktop` / `DoubleClickHidesIcons`; the old keys
+  are read once and dropped. Test project renamed `tests\CorralTests` and extended to 43 assertions.
+- `tools\desktop-toggle-test.ps1` replaces `dblclick-test.ps1`: it checks the real desktop's icon and fence
+  visibility after every gesture in every mode.
+
 ## 1.1.0
 
 **Shortcuts no longer depend on the original.**

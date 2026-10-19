@@ -14,7 +14,7 @@
     <ApplicationIcon>Assets\corral.ico</ApplicationIcon>
 
     <!-- Single source of truth for the version: the installer build reads it from here. -->
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Product>Corral</Product>
     <Description>Desktop fences: translucent containers that organize your desktop shortcuts, files and folders.</Description>
   </PropertyGroup>

@@ -40,7 +40,7 @@ public sealed class FenceManager
     private readonly DispatcherTimer _saveTimer;
     private bool _fencesVisible = true;
     private DesktopClickWatcher? _desktopWatcher;
-    private bool _cleanDesktop;   // fences were hidden by a desktop double-click that also hides icons
+    private bool _cleanDesktop;   // while the fences are hidden, the real desktop icons are hidden too
 
     public AppConfig Config { get; }
     public DragPayload? CurrentDrag { get; set; }
@@ -81,7 +81,7 @@ public sealed class FenceManager
 
         KeepOnScreen();
         ApplyDesktopIcons();
-        _desktopWatcher = new DesktopClickWatcher(() => Config.DoubleClickDesktop, () => ToggleFencesVisible(fromDesktopClick: true));
+        _desktopWatcher = new DesktopClickWatcher(() => Config.DoubleClickAction != DoubleClickMode.Off, OnDesktopDoubleClick);
     }
 
     public void Shutdown()
@@ -249,10 +249,14 @@ public sealed class FenceManager
         Native.SetDesktopIconsVisible(!hide);
     }
 
-    public void ToggleFencesVisible(bool fromDesktopClick = false)
+    /// <param name="alsoHideIcons">
+    /// When this hides the fences, hide the real desktop icons too (a clean desktop). Showing the fences again
+    /// always clears it. The tray commands pass false, so they never hide the real icons themselves.
+    /// </param>
+    public void ToggleFencesVisible(bool alsoHideIcons = false)
     {
         _fencesVisible = !_fencesVisible;
-        _cleanDesktop = !_fencesVisible && fromDesktopClick && Config.DoubleClickHidesIcons;
+        _cleanDesktop = !_fencesVisible && alsoHideIcons;
         foreach (var w in _windows)
         {
             if (_fencesVisible) w.Show();
@@ -261,16 +265,46 @@ public sealed class FenceManager
         ApplyDesktopIcons();
     }
 
-    public void SetDoubleClickDesktop(bool enabled)
+    public void SetDoubleClickMode(DoubleClickMode mode)
     {
-        Config.DoubleClickDesktop = enabled;
+        Config.DoubleClickAction = mode;
         RequestSave();
     }
 
-    public void SetDoubleClickHidesIcons(bool enabled)
+    /// <summary>A double-click landed on empty desktop. Shift always means "icons only".</summary>
+    private void OnDesktopDoubleClick(bool shift)
     {
-        Config.DoubleClickHidesIcons = enabled;
-        RequestSave();
+        if (shift)
+        {
+            ToggleDesktopIconsOnly();
+            return;
+        }
+
+        switch (Config.DoubleClickAction)
+        {
+            case DoubleClickMode.Fences: ToggleFencesVisible(); break;
+            case DoubleClickMode.Icons: ToggleDesktopIconsOnly(); break;
+            case DoubleClickMode.Both: ToggleFencesVisible(alsoHideIcons: true); break;
+        }
+    }
+
+    /// <summary>
+    /// Flips the real desktop icons without touching the fences. With the fences showing it flips the saved
+    /// "Hide desktop icons" setting (exactly like the tray checkbox); with the fences hidden it flips the temporary
+    /// clean-desktop state, so icons and fences can each be toggled on their own at any time.
+    /// </summary>
+    public void ToggleDesktopIconsOnly()
+    {
+        if (_fencesVisible)
+        {
+            Config.HideDesktopIcons = !Config.HideDesktopIcons;
+            RequestSave();
+        }
+        else
+        {
+            _cleanDesktop = !_cleanDesktop;
+        }
+        ApplyDesktopIcons();
     }
 
     /// <summary>The colour used by every fence that does not have its own.</summary>

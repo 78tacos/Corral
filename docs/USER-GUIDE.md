@@ -253,21 +253,42 @@ on **Hide desktop icons** (see below), which you can switch off again from the t
 Tray menu (or fence menu) -> **Hide desktop icons** hides the real desktop icon layer so only your fences show.
 Your files are not touched; the icons are simply not drawn. Corral shows them again whenever it exits.
 
-### Double-click the desktop to hide the fences
+### Double-click the desktop
 
-Double-click an **empty patch of desktop** and every fence disappears; double-click again and they return.
+Double-click an **empty patch of desktop** and Corral toggles something. You choose what, and there is a second
+gesture so the fences and the icons can each be toggled on their own.
+
+| Gesture | What it does |
+|---|---|
+| **Double-click** empty desktop | Does whatever you set under tray menu -> **Double-click on the desktop** (below). Double-click again to undo |
+| **Shift + double-click** empty desktop | Always toggles the **real desktop icons only**. The fences stay exactly as they are |
+
+Tray menu -> **Double-click on the desktop** sets what the plain double-click does:
+
+| Setting | Plain double-click |
+|---|---|
+| **Hide / show fences** (default) | Hides or shows every fence. Your real desktop icons come back while the fences are away (see below) |
+| **Hide / show desktop icons** | Hides or shows the real desktop icons only. The fences stay put |
+| **Hide / show both** | Hides or shows the fences *and* the real icons together, leaving only your wallpaper. The next double-click restores everything |
+| **Do nothing** | Turns the feature off, including Shift + double-click |
+
+Good to know:
 
 - Double-clicking an *icon* is ignored, so opening things from the desktop still works normally.
-- **Normally,** hiding the fences gives you your real desktop back: if you had hidden the desktop icons, they
-  reappear while the fences are away, and are hidden again when the fences return.
-- **Clean desktop option.** Tray menu -> **...and hide desktop icons too** makes the double-click hide the
-  fences *and* the real icons, leaving only your wallpaper. The next double-click restores everything.
-- Switch the whole feature off with tray menu -> **Double-click desktop to hide fences**.
+- **Icons only** (plain double-click in that setting, or Shift + double-click anywhere) works exactly like the
+  tray's **Hide desktop icons** checkbox while the fences are showing: it flips that setting and remembers it.
+- **While the fences are hidden,** their desktop icons are handled separately. In the default setting hiding the
+  fences gives you your real desktop back (icons you had hidden reappear, and are hidden again when the fences
+  return). Press Shift + double-click while the fences are hidden to hide the icons too (a clean desktop),
+  and again to bring them back. That choice lasts only until the fences return.
+- The tray-icon double-click and the tray **Hide fences / Show fences** command also toggle the fences, in the
+  default way. They never hide the real icons themselves.
 
-The tray-icon double-click and the tray **Hide fences / Show fences** command also hide and show fences. They
-behave like the normal double-click: while the fences are hidden your real desktop icons are visible, and they
-are hidden again when the fences return (if **Hide desktop icons** is on). They never hide the real icons
-themselves; only the clean-desktop double-click does that.
+Some examples. Say you normally keep the icons hidden and use fences:
+
+- Double-click (default setting): fences disappear and your real icons appear, handy for a quick look at the
+  actual desktop. Double-click again to go back.
+- Shift + double-click: the fences stay, and the icons toggle on or off.
 
 ---
 
@@ -284,8 +305,7 @@ themselves; only the clean-desktop double-click does that.
 | Hide desktop icons | Hides the real desktop icons (checked = hidden) |
 | Lock layout | Prevents moving and resizing |
 | Snap to edges | Fences snap to screen edges and each other |
-| Double-click desktop to hide fences | Turns the desktop double-click shortcut on or off |
-| ...and hide desktop icons too | With the shortcut: also hide the real icons (clean desktop) |
+| Double-click on the desktop | What a plain double-click on empty desktop does: Do nothing / Hide-show fences / Hide-show desktop icons / Hide-show both. Shift + double-click always toggles the icons only |
 | Peek when rolled up | Rolled-up fences open while hovered |
 | Background | Glass / Light / Medium / Heavy / Solid transparency |
 | Default color | Color for fences without their own; ten presets or Custom... |
@@ -376,8 +396,8 @@ Something may be covering them (a maximized window), or they were hidden with th
 tray's **Hide fences**. Double-click an empty patch of desktop, or choose **Show fences** in the tray menu.
 
 **My desktop icons are gone.**
-Either **Hide desktop icons** is on (tray menu), or the clean-desktop double-click hid them. Turn the option off
-or double-click the desktop again. Exiting Corral always shows them. If they are still missing, right-click the
+Either **Hide desktop icons** is on (tray menu), or a desktop double-click hid them (a plain double-click set to
+icons or both, or Shift + double-click). Turn the option off or repeat the gesture. Exiting Corral always shows them. If they are still missing, right-click the
 desktop -> View -> Show desktop icons.
 
 **A fence ended up off-screen after I changed monitors.**
@@ -402,9 +422,10 @@ Transparency effects.
 **"Run as administrator" does nothing.**
 If you cancelled the Windows permission prompt, that is expected. Otherwise the target may be missing.
 
-**The double-click on the desktop does not hide my fences.**
-Check that **Double-click desktop to hide fences** is ticked in the tray menu. Click on bare wallpaper, not on
-an icon, and not on a fence. The two clicks must be quick and close together, as for any double-click.
+**The double-click on the desktop does nothing, or does the wrong thing.**
+Check tray menu -> **Double-click on the desktop**: it must not be on *Do nothing*, and it decides what a plain
+double-click controls (fences, icons or both). Shift + double-click always means "icons only". Click on bare
+wallpaper, not on an icon, and not on a fence. The two clicks must be quick and close together, as for any double-click.
 Some security or remote-control software that blocks system-wide mouse hooks can stop it working; if so, use the
 tray icon double-click instead.
 

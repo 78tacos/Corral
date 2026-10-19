@@ -46,6 +46,7 @@ That needs Inno Setup 6 (`winget install JRSoftware.InnoSetup`) and produces
 4. Right-click the tray icon, choose **Organize desktop into fences**, and Corral sorts everything on your
    desktop into Programs, Folders, Documents, Pictures & Media and Other fences for you.
 5. Double-click an empty patch of desktop to hide all the fences; double-click again to bring them back.
+   Hold **Shift** while you double-click to toggle just the real desktop icons instead.
 
 ## Project layout
 
@@ -63,7 +64,7 @@ Corral/
   InputDialog.xaml(.cs)     the rename prompt
   Assets/corral.ico         application icon (generated, see tools/make-icon.ps1)
   installer/                Inno Setup script and build/test scripts
-  tests/                    LinkStore unit tests
+  tests/                    unit tests (LinkStore and the settings file)
   tools/                    developer helper scripts (screenshots, icon generation, UI tests)
   docs/                     user guide and developer guide
 ```

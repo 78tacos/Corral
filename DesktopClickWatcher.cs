@@ -13,7 +13,7 @@ namespace Corral;
 internal sealed class DesktopClickWatcher : IDisposable
 {
     private readonly Func<bool> _enabled;
-    private readonly Action _onDoubleClick;
+    private readonly Action<bool> _onDoubleClick;
     private readonly Native.LowLevelMouseProc _proc;   // keep a reference so the delegate isn't collected
     private IntPtr _hook;
 
@@ -21,7 +21,8 @@ internal sealed class DesktopClickWatcher : IDisposable
     private uint _lastTime;
     private POINT _lastPoint;
 
-    public DesktopClickWatcher(Func<bool> enabled, Action onDoubleClick)
+    /// <param name="onDoubleClick">Called on the UI thread with true when Shift was held for the double-click.</param>
+    public DesktopClickWatcher(Func<bool> enabled, Action<bool> onDoubleClick)
     {
         _enabled = enabled;
         _onDoubleClick = onDoubleClick;
@@ -69,10 +70,11 @@ internal sealed class DesktopClickWatcher : IDisposable
 
         _lastOnDesktop = false;
         POINT pt = e.pt;
+        bool shift = Native.IsShiftDown(); // read now, in the hook, while it still reflects this click
         Task.Run(() =>
         {
             if (IsOverIcon(pt)) return;
-            Application.Current?.Dispatcher.BeginInvoke(_onDoubleClick);
+            Application.Current?.Dispatcher.BeginInvoke(() => _onDoubleClick(shift));
         });
     }
 

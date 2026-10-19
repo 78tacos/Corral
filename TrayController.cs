@@ -48,9 +48,25 @@ internal sealed class TrayController : IDisposable
         Add("Hide desktop icons", () => _mgr.SetDesktopIconsHidden(!_mgr.Config.HideDesktopIcons), _mgr.Config.HideDesktopIcons);
         Add("Lock layout", () => _mgr.SetLocked(!_mgr.Config.Locked), _mgr.Config.Locked);
         Add("Snap to edges", () => _mgr.SetSnap(!_mgr.Config.SnapToEdges), _mgr.Config.SnapToEdges);
-        Add("Double-click desktop to hide fences", () => _mgr.SetDoubleClickDesktop(!_mgr.Config.DoubleClickDesktop), _mgr.Config.DoubleClickDesktop);
-        Add("   ...and hide desktop icons too", () => _mgr.SetDoubleClickHidesIcons(!_mgr.Config.DoubleClickHidesIcons),
-            _mgr.Config.DoubleClickHidesIcons, enabled: _mgr.Config.DoubleClickDesktop);
+
+        var dbl = new ToolStripMenuItem("Double-click on the desktop");
+        foreach (var (label, mode) in new[]
+        {
+            ("Do nothing", DoubleClickMode.Off),
+            ("Hide / show fences", DoubleClickMode.Fences),
+            ("Hide / show desktop icons", DoubleClickMode.Icons),
+            ("Hide / show both", DoubleClickMode.Both),
+        })
+        {
+            var item = new ToolStripMenuItem(label) { Checked = _mgr.Config.DoubleClickAction == mode };
+            var m = mode;
+            item.Click += (_, _) => _mgr.SetDoubleClickMode(m);
+            dbl.DropDownItems.Add(item);
+        }
+        dbl.DropDownItems.Add(new ToolStripSeparator());
+        dbl.DropDownItems.Add(new ToolStripMenuItem("Shift + double-click: desktop icons only") { Enabled = false });
+        _menu.Items.Add(dbl);
+
         Add("Peek when rolled up", () => _mgr.SetPeek(!_mgr.Config.PeekOnHover), _mgr.Config.PeekOnHover);
 
         var opacity = new ToolStripMenuItem("Background");
