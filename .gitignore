@@ -1,0 +1,11 @@
+bin/
+obj/
+dist/
+*.user
+.vs/
+*_wpftmp.csproj
+
+# build and test output
+installer/Output/
+testrun/
+e2erun/

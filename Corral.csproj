@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>Corral</AssemblyName>
+    <RootNamespace>Corral</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+    <ApplicationIcon>Assets\corral.ico</ApplicationIcon>
+
+    <!-- Single source of truth for the version: the installer build reads it from here. -->
+    <Version>1.1.0</Version>
+    <Product>Corral</Product>
+    <Description>Desktop fences: translucent containers that organize your desktop shortcuts, files and folders.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Test programs live under tests\ and are built separately; keep them out of the app. -->
+    <Compile Remove="tests\**" />
+    <EmbeddedResource Remove="tests\**" />
+    <None Remove="tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Also embedded so the tray can pick the right size for the current DPI. -->
+    <EmbeddedResource Include="Assets\corral.ico" LogicalName="corral.ico" />
+  </ItemGroup>
+
+</Project>
