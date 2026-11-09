@@ -409,12 +409,17 @@ public sealed class FenceManager
         return best;
     }
 
-    /// <summary>Pull any fence that ended up off every monitor (unplugged display) back onto the primary one.</summary>
+    /// <summary>
+    /// Pull any fence that ended up off every monitor (unplugged display) back onto the primary one.
+    /// Rescued fences cascade by the same 34*scale step CreateFence uses, so they do not land on one point.
+    /// </summary>
     private void KeepOnScreen()
     {
         var screens = System.Windows.Forms.Screen.AllScreens;
         var primary = System.Windows.Forms.Screen.PrimaryScreen?.WorkingArea ?? new System.Drawing.Rectangle(0, 0, 1920, 1080);
         double s = SystemScale;
+        int step = (int)(34 * s);
+        int pulled = 0;
 
         foreach (var w in _windows)
         {
@@ -422,7 +427,10 @@ public sealed class FenceManager
             var rect = new System.Drawing.Rectangle(r.Left, r.Top, r.Width, r.Height);
             if (screens.Any(sc => sc.WorkingArea.IntersectsWith(rect))) continue;
 
-            Native.SetWindowPos(w.Hwnd, IntPtr.Zero, primary.Left + (int)(60 * s), primary.Top + (int)(60 * s),
+            int offset = step * (pulled % 8);
+            pulled++;
+            Native.SetWindowPos(w.Hwnd, IntPtr.Zero,
+                primary.Left + (int)(60 * s) + offset, primary.Top + (int)(60 * s) + offset,
                 r.Width, r.Height, Native.SWP_NOSIZE | Native.SWP_NOZORDER | Native.SWP_NOACTIVATE);
             w.CaptureBounds();
         }
