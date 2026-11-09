@@ -471,6 +471,10 @@ public sealed class FenceManager
                     if ((info.Attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0) continue;
                     if (info.Name.Equals("desktop.ini", StringComparison.OrdinalIgnoreCase)) continue;
                     if (already.Contains(info.FullName)) continue;
+                    // A fence holds the copy in Links, not this desktop path. Same bytes means already imported.
+                    // Name and shortcut target are not compared; files and folders still match by path only.
+                    if (LinkStore.IsShortcut(info.FullName) && Links.FindStoredCopy(info.FullName, already) != null)
+                        continue;
                     result.Add(info.FullName);
                 }
             }

@@ -300,8 +300,11 @@ The installer uses this instead of killing the process.
 
 ### 4.13 Organize desktop
 
-`GetDesktopEntries` lists the user and public desktops (skipping hidden/system files, `desktop.ini`, and paths
-already in any fence). `OrganizeDesktop` groups them with `Categorise` (extension tables at the top of that
+`GetDesktopEntries` lists the user and public desktops (skipping hidden/system files, `desktop.ini`, and anything
+already in a non-portal fence). A shortcut (`.lnk`, `.url`, `.appref-ms`) is already imported when a fence holds a
+stored copy with the same bytes (the compare `LinkStore.Adopt` uses), so organizing again does not make a second
+copy. The file name and the shortcut target are not compared. Real files and folders match only by path.
+`OrganizeDesktop` groups them with `Categorise` (extension tables at the top of that
 region of `FenceManager.cs`), then lays out one fence per group left-to-right, wrapping to a new row at the
 right edge, with width from a column count of roughly `sqrt(count * 1.6)` clamped to 3-6 and height capped at
 five rows. Shortcuts go through `LinkStore.Adopt`, so the new fences hold private copies (the originals stay on
@@ -455,7 +458,7 @@ All live in `tools\` or `installer\`. They are PowerShell 7 and are meant for th
 | `tools\desktop-toggle-test.ps1 -Exe <exe> -WorkDir <dir> [-Modes ...] [-X -Y]` | Live test of every *Double-click on the desktop* mode, plain and Shift. After each double-click it asks Windows whether the real desktop icons and the fence windows are visible, and compares with what the mode should produce (18 steps, PASS/FAIL) | **Minimizes your windows, moves and clicks the mouse for about a minute per run, and quits then restarts your Corral.** Don't use the PC during the run. The click point defaults to 75% across / 45% down the primary screen; pass `-X`/`-Y` if an icon sits there. It aborts a step rather than click if something else moved the cursor |
 | `tools\make-icon.ps1` | Draws the icon in code and writes `Assets\corral.ico` (nine sizes, PNG-compressed) | Overwrites the icon. `-Preview file.png` also saves the 256 px image |
 | `tools\icon-sheet.ps1 -Ico <ico> -Out <png>` | Renders the icon at 16-48 px, zoomed, on dark and light, to check legibility | None |
-| `tests\CorralTests` (run: `dotnet run --project tests\CorralTests`) | 43 assertions. `LinkStore` (25): copy survives deleting the original, files/folders not copied, duplicate reuse, name collisions, read-only originals, discard safety, look-alike folder paths, copy-failure fallback. Settings file (18): upgrading 1.0/1.1 double-click booleans, new setting wins, round trips, readable names, bad input | Uses temp folders it deletes; never touches the real Recycle Bin or your settings |
+| `tests\CorralTests` (run: `dotnet run --project tests\CorralTests`) | 50 assertions. `LinkStore` (32): copy survives deleting the original, files/folders not copied, duplicate reuse, name collisions, read-only originals, discard safety, look-alike folder paths, copy-failure fallback, and a `.url` already stored byte-for-byte counts as imported (same name or same target with different bytes does not; a regular file does not either). Settings file (18): upgrading 1.0/1.1 double-click booleans, new setting wins, round trips, readable names, bad input | Uses temp folders it deletes; never touches the real Recycle Bin or your settings |
 | `tools\e2e-copy-test.ps1 -Exe <exe> -WorkDir <dir> [-RealConfig <config.json>]` | Runs the real app against a throwaway config: shortcut copied in at startup, original deleted, item survives a restart (screenshot). With `-RealConfig` it dry-runs the migration on a *copy* of that config | **Quits your running Corral** (gracefully) and starts it again at the end. Never modifies the real config or originals |
 | `tools\check-docs.ps1` | Checks the Markdown docs: no stray control characters, every relative link resolves, every `#anchor` matches a heading. Run it after editing docs | None |
 | `installer\build.ps1` | Publish and build the installer | Recreates `dist\` |

@@ -30,6 +30,9 @@ internal static class Program
 
     private static int Main()
     {
+        // Runs without WScript.Shell, so a host that cannot create .lnk files still executes it.
+        ShortcutImportTests.Run(Check);
+
         string work = Path.Combine(Path.GetTempPath(), "corral-linkstore-" + Guid.NewGuid().ToString("N"));
         string desktop = Path.Combine(work, "desktop");
         string root = Path.Combine(work, "Links");
