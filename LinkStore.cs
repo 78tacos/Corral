@@ -58,11 +58,8 @@ public sealed class LinkStore
     {
         if (!IsShortcut(source) || IsStored(source)) return source;
 
-        foreach (string held in existing)
-        {
-            if (IsStored(held) && File.Exists(held) && SameContent(held, source))
-                return held;
-        }
+        string? copy = FindStoredCopy(source, existing);
+        if (copy != null) return copy;
 
         try
         {
@@ -120,6 +117,22 @@ public sealed class LinkStore
             Log.Write("Could not resolve shortcut target: " + path, ex);
             return null;
         }
+    }
+
+    /// <summary>
+    /// The stored copy of <paramref name="source"/> among <paramref name="existing"/>, or null.
+    /// Only shortcuts are considered, and only byte for byte: the file name and the shortcut target
+    /// are not compared, because two different shortcuts can share either one.
+    /// </summary>
+    public string? FindStoredCopy(string source, IEnumerable<string> existing)
+    {
+        if (!IsShortcut(source)) return null;
+        foreach (string held in existing)
+        {
+            if (IsStored(held) && File.Exists(held) && SameContent(held, source))
+                return held;
+        }
+        return null;
     }
 
     private string UniquePath(string fileName)
