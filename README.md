@@ -18,7 +18,7 @@ originals from the desktop; real files and folders stay where they are and the f
 
 ## Quick start
 
-**Install it.** Run `installer\Output\Corral-Setup-1.0.0.exe` (build it first if it is missing, see below).
+**Install it.** Run `installer\Output\Corral-Setup-1.2.0.exe` (build it first if it is missing, see below).
 It needs the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (x64); the installer
 tells you if it is missing.
 

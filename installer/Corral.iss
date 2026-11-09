@@ -3,7 +3,7 @@
 
 #define AppName "Corral"
 #ifndef AppVersion
-  #define AppVersion "1.0.0"
+  #define AppVersion "1.2.0"
 #endif
 #define AppExe "Corral.exe"
 

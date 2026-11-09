@@ -28,7 +28,7 @@ Contents
 **Requirements:** Windows 10 or 11 (64-bit) and the
 [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (x64).
 
-1. Run `Corral-Setup-1.0.0.exe`.
+1. Run `Corral-Setup-1.2.0.exe`.
 2. If the runtime is missing, setup says so and offers to open the download page. Install the runtime, then
    run setup again. (You can also choose to install Corral anyway; it will not start until the runtime is there.)
 3. Choose a folder (the default, `%LOCALAPPDATA%\Programs\Corral`, needs no administrator rights), then decide
@@ -372,8 +372,8 @@ fences and settings. The default, **No**, keeps them in case you reinstall.
 **Scripted installs** (for IT): the installer accepts the standard Inno Setup switches.
 
 ```
-Corral-Setup-1.0.0.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
-Corral-Setup-1.0.0.exe /VERYSILENT /DIR="C:\Tools\Corral" /TASKS=startup
+Corral-Setup-1.2.0.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+Corral-Setup-1.2.0.exe /VERYSILENT /DIR="C:\Tools\Corral" /TASKS=startup
 ```
 
 `/TASKS=startup` turns on start-at-sign-in; `/TASKS=""` turns it off. Silent installs do not launch Corral.
