@@ -253,10 +253,20 @@ public partial class FenceWindow : Window
         }
 
         r = _mgr.Snap(this, r, _dragMode, scale);
-        if (_dragMode != "M" && (_dragMode.Contains('L') || _dragMode.Contains('R')) && r.Width < minW)
+        if (_dragMode != "M")
         {
-            // Snapping must never shrink us below the minimum.
-            return;
+            // Snap can pull a dragged edge past the minimum. Push that edge back
+            // so the other axis of a corner drag is still applied.
+            if ((_dragMode.Contains('L') || _dragMode.Contains('R')) && r.Width < minW)
+            {
+                if (_dragMode.Contains('L')) r.Left = r.Right - minW;
+                else r.Right = r.Left + minW;
+            }
+            if ((_dragMode.Contains('T') || _dragMode.Contains('B')) && r.Height < minH)
+            {
+                if (_dragMode.Contains('T')) r.Top = r.Bottom - minH;
+                else r.Bottom = r.Top + minH;
+            }
         }
         SetBounds(r);
     }
