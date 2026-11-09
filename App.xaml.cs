@@ -57,6 +57,13 @@ public partial class App : Application
         DispatcherUnhandledException += (_, args) =>
         {
             Log.Write("Unhandled UI exception", args.Exception);
+            // FenceManager may already have hidden the desktop icons, and the tray
+            // (the only other way out under OnExplicitShutdown) does not exist yet.
+            if (_tray == null)
+            {
+                Native.SetDesktopIconsVisible(true);
+                Shutdown();
+            }
             args.Handled = true;
         };
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
