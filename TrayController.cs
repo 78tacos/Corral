@@ -37,6 +37,8 @@ internal sealed class TrayController : IDisposable
 
     private void Rebuild()
     {
+        // Clear() drops items without disposing them, and a ToolStripItem does not dispose its Image.
+        DisposeMenuItems(_menu.Items);
         _menu.Items.Clear();
 
         Add("New fence", () => _mgr.CreateFence());
@@ -104,6 +106,27 @@ internal sealed class TrayController : IDisposable
         Add("Open settings folder", () =>
             System.Diagnostics.Process.Start("explorer.exe", $"\"{_mgr.ConfigDirectory}\""));
         Add("Exit", _exit);
+    }
+
+    /// <summary>
+    /// Disposes the previous menu tree and the swatch bitmaps those items own.
+    /// The tray icon is not one of these images and is left alone.
+    /// </summary>
+    private static void DisposeMenuItems(ToolStripItemCollection items)
+    {
+        while (items.Count > 0)
+        {
+            ToolStripItem item = items[items.Count - 1];
+            if (item is ToolStripDropDownItem parent && parent.HasDropDown)
+            {
+                DisposeMenuItems(parent.DropDownItems);
+            }
+
+            // Capture before Dispose: that nulls Image without releasing the bitmap.
+            Bitmap? swatch = item.Image as Bitmap;
+            item.Dispose();
+            swatch?.Dispose();
+        }
     }
 
     private void Add(string text, Action action, bool isChecked = false, bool enabled = true)
