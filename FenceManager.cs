@@ -46,7 +46,6 @@ public sealed class FenceManager
     public DragPayload? CurrentDrag { get; set; }
     public bool IsDraggingFromFence => CurrentDrag != null;
     public bool FencesVisible => _fencesVisible;
-    public int FenceCount => _windows.Count;
     public string ConfigDirectory => _store.Directory;
 
     /// <summary>Corral's own copies of shortcuts, so fences never depend on the originals.</summary>

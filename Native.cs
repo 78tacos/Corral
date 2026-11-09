@@ -285,7 +285,6 @@ internal static class Native
 
     [DllImport("gdi32.dll")] private static extern int GetObject(IntPtr h, int count, ref BITMAP bm);
     [DllImport("gdi32.dll")] public static extern bool DeleteObject(IntPtr h);
-    [DllImport("user32.dll")] public static extern bool DestroyIcon(IntPtr h);
     [DllImport("user32.dll")] private static extern IntPtr GetDC(IntPtr hWnd);
     [DllImport("user32.dll")] private static extern int ReleaseDC(IntPtr hWnd, IntPtr dc);
     [DllImport("gdi32.dll")]
