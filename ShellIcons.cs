@@ -16,7 +16,8 @@ internal static class ShellIcons
     private sealed record Job(string Path, int Size, TaskCompletionSource<BitmapSource?> Result);
 
     private static readonly BlockingCollection<Job> Queue = new();
-    private static readonly ConcurrentDictionary<(string, int), BitmapSource> Cache = new();
+    // Path, pixel size, and UTC last-write ticks. A failed stat does not use this cache.
+    private static readonly ConcurrentDictionary<(string, int, long), BitmapSource> Cache = new();
 
     static ShellIcons()
     {
@@ -27,7 +28,8 @@ internal static class ShellIcons
 
     public static Task<BitmapSource?> GetIconAsync(string path, int size)
     {
-        if (Cache.TryGetValue((path.ToLowerInvariant(), size), out var hit))
+        if (TryGetWriteTicks(path, out long ticks) &&
+            Cache.TryGetValue((path.ToLowerInvariant(), size, ticks), out var hit))
             return Task.FromResult<BitmapSource?>(hit);
 
         var tcs = new TaskCompletionSource<BitmapSource?>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -35,7 +37,27 @@ internal static class ShellIcons
         return tcs.Task;
     }
 
-    public static void ClearCache() => Cache.Clear();
+    // False when the path cannot be stat'd, including the 1601-01-01 sentinel for a missing path.
+    private static bool TryGetWriteTicks(string path, out long ticks)
+    {
+        try
+        {
+            DateTime written = File.GetLastWriteTimeUtc(path);
+            if (written == DateTime.FromFileTimeUtc(0))
+            {
+                ticks = 0;
+                return false;
+            }
+
+            ticks = written.Ticks;
+            return true;
+        }
+        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or NotSupportedException)
+        {
+            ticks = 0;
+            return false;
+        }
+    }
 
     public static string GetDisplayName(string path)
     {
@@ -53,8 +75,11 @@ internal static class ShellIcons
             BitmapSource? bmp = null;
             try
             {
+                // Stat before the decode so a write during the load cannot be stored under the new time.
+                bool canCache = TryGetWriteTicks(job.Path, out long ticks);
                 bmp = Load(job.Path, job.Size);
-                if (bmp != null) Cache[(job.Path.ToLowerInvariant(), job.Size)] = bmp;
+                if (bmp != null && canCache)
+                    Cache[(job.Path.ToLowerInvariant(), job.Size, ticks)] = bmp;
             }
             catch (Exception ex)
             {
